@@ -1,4 +1,6 @@
-data
+data/
 *~
 *#
 *pyc
+*npy
+*binary*

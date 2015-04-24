@@ -3,8 +3,29 @@ import os
 import sys
 import operator
 import numpy
- 
+import glob
 
+def get_src_filenames(dataset_dir, phase):
+    print "Collecting filenames of", dataset_dir
+    print "Phase:", phase
+
+    if 'data-USA' in dataset_dir:
+        if phase=='test':
+            setnames = sorted(glob.glob('/home/ryan/data/caltech/data-USA/images/set*'))[6:]
+        else:
+            setnames = sorted(glob.glob('/home/ryan/data/caltech/data-USA/images/set*'))[:6]
+        Vnames = []
+        for setname in setnames:
+            Vnames += sorted(glob.glob(setname+'/V*'))
+        filenames = []
+        for Vname in Vnames:
+            filenames += sorted(glob.glob(Vname+'/*jpg'))
+    elif 'inria' in dataset_dir:
+        filenames = sorted(glob.glob('/home/ryan/data/'+phase+'/pos/*png'))
+    else:
+        raise ValueError()
+    return filenames
+ 
 def save_bbox(dir, img_idx, sc_lst):
     """
     save bboxes of an image

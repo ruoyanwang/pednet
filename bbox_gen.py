@@ -11,44 +11,60 @@ import scipy
 import scipy.misc
 import matplotlib
 import matplotlib.pyplot as plt
+import commands
 from util import save_bbox, save_bbox_caltech, load_gtbox, sc2inria, inria2sc
 from hard_mining import hard_mining
-
+from bb_regression import bb_reg_prepare_input
 
 # select TOP_K highest scores if use_top_k is True
 # select scores higher than TOP_V if use_top_k is False
 
-phase = 'test'
-dataset = 'eth'
-HARD_MINING = False
+phase = 'train'
+
+HARD_MINING = True
 if phase=='train' and HARD_MINING:
-    round_no = '1' # round number of hard_mining
+    round_no = '0' # round number of hard_mining
 
 BB_REG = False
 BB_REG_THRES = 0.5
 
 use_top_k = False
-PLOT_ON = True
+PLOT_ON = False
 
-RES_PATH = './eth/15041700_test_res/' # don't change this
-TAR_PATH = './eth/15041700_test/'
 
-INPUT_SIZE = 224
-PAD_SIZE = 3 # for VGG
-res_sc = 21
-TAR_CALTECH_PATH = '/home/ryan/data/caltech/data-ETH/res/Ours/'
-GT_PATH = '/home/ryan/data/caltech/data-ETH/annotations/'
-bg_scales = [3450, 2800, 2150, 1500, 850]
-src_scales = [[3402], [2700], [2143,1701], [1350,1071], [850,675, 536, 425]] 
+dataset = 'caltech/data-USA'
+RES_PATH = './caltech/15040800_'+phase+'_res/' # don't change this
+TAR_PATH = './caltech/15040800_'+phase+'/' 
+TAR_CALTECH_PATH = '/home/ryan/data/caltech/data-USA/res/Ours/'
+GT_PATH = '/home/ryan/data/caltech/data-USA/annotations/'
+INPUT_H = 156
+INPUT_W = 64
+
+PATCH_SIZE = 800
+PAD_H = 2  # depending on the network prototxt!
+PAD_W = 0.5
+
+res_sc_h = 21
+res_sc_w = 24
+
+patch_num_lst = [3, 2, 1]
+bg_scales = list()
+for i in range(len(patch_num_lst)):
+    bg_sc_h = patch_num_lst[i] * 640 + 160
+    bg_sc_w = patch_num_lst[i] * 740 + 60
+    bg_scales.append((bg_sc_h, bg_sc_w))
+print bg_scales
+src_scales = [[1880], [1450, 1110, 855], [660, 500, 390, 300]] 
+
 
 BB_REG_PATH = TAR_PATH + 'bb_reg/'
 
-NMS_THRES = 0.45
+NMS_THRES = 0.25
 if use_top_k:
     TOP_K = 1 # increase/enlarge boxes
     TAR_PATH += 'K' + str(TOP_K)
 else:
-    TOP_V = -2.0
+    TOP_V = 3.3
     TAR_PATH += 'V' + str(TOP_V)
 TAR_PATH += '_T'+str(NMS_THRES)
 if not os.path.exists(TAR_PATH):
@@ -56,27 +72,38 @@ if not os.path.exists(TAR_PATH):
 if BB_REG and not os.path.exists(BB_REG_PATH):
     os.makedirs(BB_REG_PATH)
 
-if dataset=='eth':
+
+if dataset=='caltech/data-USA':
+    commands.getstatusoutput('rm -r /home/ryan/data/caltech/data-USA/res/Ours/*')
     if phase=='test':
-        setnames = sorted(glob.glob('/home/ryan/data/caltech/data-ETH/images/set*'))[:]
+        commands.getstatusoutput('rm -r /home/ryan/data/caltech/results/UsaTest')
+        setnames = sorted(glob.glob('/home/ryan/data/caltech/data-USA/images/set*'))[6:]
     else:
-        setnames = sorted(glob.glob('/home/ryan/data/caltech/data-ETH/images/set*'))[1:]
+        commands.getstatusoutput('rm -r /home/ryan/data/caltech/results/UsaTrain')
+        setnames = sorted(glob.glob('/home/ryan/data/caltech/data-USA/images/set*'))[:6]
     Vnames = []
     for setname in setnames:
         Vnames += sorted(glob.glob(setname+'/V*'))
     src_filenames = []
     for Vname in Vnames:
-        src_filenames += sorted(glob.glob(Vname+'/*png'))
+        src_filenames += sorted(glob.glob(Vname+'/*jpg'))
+elif dataset=='inria':
+    src_filenames = sorted(glob.glob('/home/ryan/data/inria/'+phase+'/pos/*png'))
 else:
     raise ValueError()
 
 
 for src_filename in src_filenames:
+    if dataset=='caltech/data-USA':
+        set_name = src_filename[-21:-16]
+        V_name = src_filename[-15:-11]
+        frame_name = src_filename[-10:-4]
+        frame_num = int(frame_name[1:])
+    else:
+        frame_num = int(src_filename[-9:-4])
 
-    set_name = src_filename[-21:-16]
-    V_name = src_filename[-15:-11]
-    frame_name = src_filename[-10:-4]
-    frame_num = int(frame_name[1:])
+    # if int(set_name[-1])<=3:
+    #     continue
 
     src_img = scipy.misc.imread(src_filename)
     init_score_lst = list()
@@ -91,17 +118,19 @@ for src_filename in src_filenames:
                 res_map = numpy.load(res_map_filename)
                 offset_top = int(res_map_filename.split('_')[-4])
                 offset_left = int(res_map_filename.split('_')[-2])
-                src_img_len = max(src_img.shape[0]*0.41, src_img.shape[1])
-                sc_ratio = src_scales[bg_level][src_level] / src_img_len
-                half_len = src_img_len * INPUT_SIZE / src_scales[bg_level][src_level] * 0.5 # box
-                for i in range(res_sc):
-                    for j in range(res_sc):
+                src_img_h = src_img.shape[0]
+                src_img_w = src_img.shape[1]
+                sc_ratio = src_scales[bg_level][src_level] / src_img_w
+                half_h = src_img_w * INPUT_H / src_scales[bg_level][src_level] * 0.5 # box; the 'w' is correct!
+                half_w = half_h * 64./156
+                for i in range(res_sc_h):
+                    for j in range(res_sc_w):
                         # score tuple: (i, j, half_height, half_width, score)
                         # i is the vertical index, counted from up to down
-                        top_i = (offset_top + (i+PAD_SIZE+0.5) * 850/(res_sc+PAD_SIZE*2)) / sc_ratio
-                        left_j = (offset_left + (j+PAD_SIZE+0.5) * 850/(res_sc+PAD_SIZE*2))/sc_ratio
-                        init_score_lst.append(tuple((int(top_i/0.41)
-                                  , int(left_j), int(half_len/0.41), int(half_len), res_map[i, j])))
+                        top_i = (offset_top + (i+PAD_H+0.5) * PATCH_SIZE/(res_sc_h+PAD_H*2)) / sc_ratio
+                        left_j = (offset_left + (j+PAD_W+0.5) * PATCH_SIZE/(res_sc_w+PAD_W*2))/sc_ratio
+                        init_score_lst.append(tuple((int(top_i)
+                                  , int(left_j), int(half_h), int(half_w), res_map[i, j])))
     init_score_lst.sort(key=operator.itemgetter(4), reverse=True)
     """
     try:

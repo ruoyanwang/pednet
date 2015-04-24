@@ -1,0 +1,18 @@
+## Configuration that contains directory paths
+
+dataset_dir: 'data/data-USA/'
+device_id: 1
+
+# Cascade 0: Full convolution for proposals
+cascade0_dir: 'cascade0/'
+exp_id: '15042400'
+phase: 'train'
+
+cascade0_model: 'vgg_iter_200.caffemodel'
+mean_file: 'misc/vgg_mean.npy'
+conv_prototxt: 'misc/vgg_deploy.prototxt'
+full_conv_prototxt: 'misc/vgg_deploy_fullconv.prototxt'
+
+res_h: 21
+res_w: 24
+plot_feat: False

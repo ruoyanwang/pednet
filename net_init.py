@@ -15,7 +15,7 @@ def net_init(src_proto, model, mean_file, device_id=1, dir='inria'):
     return net
 
 
-def fullconv_net_init(src_proto, tar_proto, model, mean_file, device_id, dataset):
+def fullconv_net_init(src_proto, tar_proto, model, mean_file, device_id, dataset, lv=0):
     """ Transfer prototxts and initialize a network"""
     net = caffe.Net(src_proto, model)
     """

@@ -1,7 +1,7 @@
 ## Configuration that contains directory paths
 
 dataset_dir: 'data/data-USA/'
-device_id: 1
+device_id: 0
 
 # Cascade 0: Full convolution for proposals
 cascade0_dir: 'cascade0/'
@@ -14,8 +14,8 @@ models_dir: 'models/'
 conv_prototxt: 'vgg_deploy.prototxt'
 full_conv_prototxt_prefix: 'vgg_deploy_fullconv_lv'
 
-res_h: 21
-res_w: 24
-plot_feat: False
+data-USA_pyra_widths: [1000, 956, 800, 664, 552, 460, 384, 320, 264, 200]
 
-data-USA_pyra_widths: [1148, 956, 800, 664, 552, 460, 384, 320, 264, 200]
+plot_feat: True
+
+

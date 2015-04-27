@@ -2,8 +2,8 @@ name: "VGG_ILSVRC_16_layers"
 input: "data"
 input_dim: 1
 input_dim: 3
-input_dim: 50
-input_dim: 100
+input_dim: 44
+input_dim: 88
 layers {
   bottom: "data"
   top: "conv1_1"

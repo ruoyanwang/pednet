@@ -2,8 +2,8 @@ name: "VGG_ILSVRC_16_layers"
 input: "data"
 input_dim: 1
 input_dim: 3
-input_dim: 264
 input_dim: 198
+input_dim: 264
 layers {
   bottom: "data"
   top: "conv1_1"
@@ -286,7 +286,7 @@ layers {
   name: "fc6_conv"
   type: CONVOLUTION
   convolution_param {
-    kernel_h: 4
+    kernel_h: 3
     kernel_w: 2
     num_output: 2048
   }

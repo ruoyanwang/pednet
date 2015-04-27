@@ -19,24 +19,29 @@ from net_init import fullconv_net_init
 from util import get_src_filenames
 
 
-# Unpack config and set up convnet
+# Unpack configs
 with open('config.yaml', 'r') as f:
     config = yaml.load(f)
 cascade0_dir = config['dataset_dir']+config['cascade0_dir']+'/'
 tar_dir = cascade0_dir+config['exp_id']+'_'+config['phase']+'/'
+models_dir = config['models_dir']
 if not os.path.exists(tar_dir):
     os.makedirs(tar_dir)
+
 src_filenames = get_src_filenames(config['dataset_dir'], config['phase'])
 
-net_full_conv = fullconv_net_init(config['conv_prototxt'], config['full_conv_prototxt'], cascade0_dir+config['cascade0_model'], config['mean_file'], config['device_id'], config['dataset_dir'])
-
-if dir=='inria':
-    bg_scales = [3450, 2800, 2150, 1500, 850]
-    src_scales = [[3402], [2700], [2143,1701], [1350,1071], [850,675,536,425]]
+if 'data-USA' in config['dataset_dir']:
+    pyra_widths = config['data-USA_pyra_widths']
 else:
-    patch_num_lst = [3, 2, 1]
-    # bg_scales = [5400, 4750, 4100, 3450, 2800, 2150, 1500]
-    src_scales = [[1880], [1450, 1110, 855], [660, 500, 390, 300]]
+    raise ValueError()
+num_lv = len(pyra_widths)
+print "Num of pyramid levels:", num_lv
+
+# Initialize ConvNets for all levels
+convnets = list()
+for lv in range(num_lv):
+    convnets.append(fullconv_net_init(models_dir+config['conv_prototxt'], models_dir+config['full_conv_prototxt_prefix']+str(lv)+'.prototxt', cascade0_dir+config['cascade0_model'], config['mean_file'], config['device_id'], config['dataset_dir']))
+
 
 for bg_level in range(len(patch_num_lst)):
     bg_sc_w = patch_num_lst[bg_level]*740 + 60

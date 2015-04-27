@@ -2,8 +2,8 @@ name: "VGG_ILSVRC_16_layers"
 input: "data"
 input_dim: 1
 input_dim: 3
-input_dim: 800
-input_dim: 800
+input_dim: 50
+input_dim: 100
 layers {
   bottom: "data"
   top: "conv1_1"
@@ -282,24 +282,22 @@ layers {
 }
 layers {
   bottom: "pool5"
-  top: "fc6_conv"
-  name: "fc6_conv"
-  type: CONVOLUTION
-  convolution_param {
-    kernel_h: 5
-    kernel_w: 2
-    num_output: 1024
+  top: "fc6_c"
+  name: "fc6_c"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 2048
   }
 }
 layers {
-  bottom: "fc6_conv"
-  top: "fc6_conv"
+  bottom: "fc6_c"
+  top: "fc6_c"
   name: "relu6"
   type: RELU
 }
 layers {
-  bottom: "fc6_conv"
-  top: "fc6_conv"
+  bottom: "fc6_c"
+  top: "fc6_c"
   name: "drop6"
   type: DROPOUT
   dropout_param {
@@ -307,24 +305,23 @@ layers {
   }
 }
 layers {
-  bottom: "fc6_conv"
-  top: "fc7_conv"
-  name: "fc7_conv"
-  type: CONVOLUTION
-  convolution_param {
-    num_output: 1024
-    kernel_size: 1
+  bottom: "fc6_c"
+  top: "fc7_c"
+  name: "fc7_c"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 2048
   }
 }
 layers {
-  bottom: "fc7_conv"
-  top: "fc7_conv"
+  bottom: "fc7_c"
+  top: "fc7_c"
   name: "relu7"
   type: RELU
 }
 layers {
-  bottom: "fc7_conv"
-  top: "fc7_conv"
+  bottom: "fc7_c"
+  top: "fc7_c"
   name: "drop7"
   type: DROPOUT
   dropout_param {
@@ -332,12 +329,12 @@ layers {
   }
 }
 layers {
-  bottom: "fc7_conv"
-  top: "fc8_inria_conv"
-  name: "fc8_inria_conv"
-  type: CONVOLUTION
-  convolution_param {
-    kernel_size: 1
+  bottom: "fc7_c"
+  top: "fc8_c"
+  name: "fc8_c"
+  type: INNER_PRODUCT
+  inner_product_param {
     num_output: 2
   }
 }
+

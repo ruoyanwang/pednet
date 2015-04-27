@@ -2,8 +2,8 @@ name: "VGG_ILSVRC_16_layers"
 input: "data"
 input_dim: 1
 input_dim: 3
-input_dim: 956
-input_dim: 717
+input_dim: 552
+input_dim: 414
 layers {
   bottom: "data"
   top: "conv1_1"
@@ -278,5 +278,66 @@ layers {
     pool: MAX
     kernel_size: 2
     stride: 2
+  }
+}
+layers {
+  bottom: "pool5"
+  top: "fc6_conv"
+  name: "fc6_conv"
+  type: CONVOLUTION
+  convolution_param {
+    kernel_h: 4
+    kernel_w: 2
+    num_output: 2048
+  }
+}
+layers {
+  bottom: "fc6_conv"
+  top: "fc6_conv"
+  name: "relu6"
+  type: RELU
+}
+layers {
+  bottom: "fc6_conv"
+  top: "fc6_conv"
+  name: "drop6"
+  type: DROPOUT
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layers {
+  bottom: "fc6_conv"
+  top: "fc7_conv"
+  name: "fc7_conv"
+  type: CONVOLUTION
+  convolution_param {
+    num_output: 2048
+    kernel_size: 1
+  }
+}
+layers {
+  bottom: "fc7_conv"
+  top: "fc7_conv"
+  name: "relu7"
+  type: RELU
+}
+layers {
+  bottom: "fc7_conv"
+  top: "fc7_conv"
+  name: "drop7"
+  type: DROPOUT
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layers {
+  bottom: "fc7_conv"
+  top: "fc8_inria_conv"
+  name: "fc8_inria_conv"
+  type: CONVOLUTION
+  convolution_param {
+    kernel_size: 1
+    num_output: 2
   }
 }

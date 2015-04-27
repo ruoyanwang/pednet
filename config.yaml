@@ -5,14 +5,17 @@ device_id: 1
 
 # Cascade 0: Full convolution for proposals
 cascade0_dir: 'cascade0/'
-exp_id: '15042400'
+exp_id: '15042700'
 phase: 'train'
 
 cascade0_model: 'vgg_iter_200.caffemodel'
 mean_file: 'misc/vgg_mean.npy'
-conv_prototxt: 'misc/vgg_deploy.prototxt'
-full_conv_prototxt: 'misc/vgg_deploy_fullconv.prototxt'
+models_dir: 'models/'
+conv_prototxt: 'vgg_deploy.prototxt'
+full_conv_prototxt_prefix: 'vgg_deploy_fullconv_lv'
 
 res_h: 21
 res_w: 24
 plot_feat: False
+
+data-USA_pyra_widths: [1148, 956, 800, 664, 552, 460, 384, 320, 264, 200]

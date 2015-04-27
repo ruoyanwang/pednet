@@ -6,7 +6,7 @@ from caffe.proto import caffe_pb2
 import numpy
 
 bgr_pixels = [103.939, 116.779, 123.68]
-mean_npy = numpy.ones((1, 3, 110, 55))
+mean_npy = numpy.ones((1, 3, 104, 52))
 for i in range(3):
     mean_npy[:, i, :, :] *= bgr_pixels[i]
 print mean_npy

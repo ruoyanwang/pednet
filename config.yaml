@@ -1,13 +1,22 @@
-## Configuration that contains directory paths
+## Configuration that contains directory paths ##
 
-dataset_dir: 'data/data-USA/'
 device_id: 0
+cascade: 'cascade0'
+dataset_dir: 'data/data-USA/'
+gt_dir: '/home/ryan/data/caltech/data-USA/annotations/'
+eval_dir: '/home/ryan/data/caltech/data-USA/res/Ours/'
 
-# Cascade 0: Full convolution for proposals
+## ConvNet info
+input_h: 88
+input_w: 44
+pad_h: 1
+pad_w: 0.5
+
+## Cascade 0: Full convolution for proposals
+ # Configs for feature pyramids
 cascade0_dir: 'cascade0/'
 exp_id: '15042700'
 phase: 'train'
-
 cascade0_model: 'vgg_iter_200.caffemodel'
 mean_file: 'misc/vgg_mean.npy'
 models_dir: 'models/'
@@ -15,7 +24,11 @@ conv_prototxt: 'vgg_deploy.prototxt'
 full_conv_prototxt_prefix: 'vgg_deploy_fullconv_lv'
 
 data-USA_pyra_widths: [1000, 956, 800, 664, 552, 460, 384, 320, 264, 200]
+plot_feat: False
 
-plot_feat: True
+ # Configs for bounding boxes
+hard_mining_on: False
+nms_thres: 0.25  
+bbox_score_thres: 3.3
 
-
+print_max_score_on: False

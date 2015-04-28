@@ -23,11 +23,9 @@ from util import get_src_filenames
 with open('config.yaml', 'r') as f:
     config = yaml.load(f)
 dataset_dir = config['dataset_dir']
-cascade0_dir = config['dataset_dir']+config['cascade0_dir']
-tar_exp_dir = cascade0_dir+config['exp_id']+'_'+config['phase']+'_res/'
+cascade_dir = config['dataset_dir']+config[config['cascade']+'_dir']
+tar_exp_dir = cascade_dir+config['exp_id']+'_'+config['phase']+'_res/'
 models_dir = config['models_dir']
-# if not os.path.exists(tar_dir):
-#    os.makedirs(tar_dir)
 
 src_filenames = get_src_filenames(dataset_dir, config['phase'])
 
@@ -40,7 +38,7 @@ print "Num of pyramid levels:", num_lv
 
 # Generate feature pyramids
 for lv in range(num_lv):
-    convnet = fullconv_net_init(models_dir+config['conv_prototxt'], models_dir+config['full_conv_prototxt_prefix']+str(lv)+'.prototxt', cascade0_dir+config['cascade0_model'], config['mean_file'], config['device_id'], dataset_dir, lv)
+    convnet = fullconv_net_init(models_dir+config['conv_prototxt'], models_dir+config['full_conv_prototxt_prefix']+str(lv)+'.prototxt', cascade_dir+config[config['cascade']+'_model'], config['mean_file'], config['device_id'], dataset_dir, lv)
     tar_lv_dir = tar_exp_dir + str(lv)+'/'
     for src_filename in src_filenames:
         if 'data-USA' in dataset_dir:

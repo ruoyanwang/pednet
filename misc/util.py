@@ -5,90 +5,66 @@ import operator
 import numpy
 import glob
 
-def get_src_filenames(dataset_dir, phase):
+def get_src_filenames(dataset_dir, phase, prefix='/home/ryan/data/caltech/data-USA/images/', suffix='jpg'):
     print "Collecting filenames of", dataset_dir
+    print "File format:", suffix
     print "Phase:", phase
-
+    
     if 'data-USA' in dataset_dir:
         if phase=='test':
-            setnames = sorted(glob.glob('/home/ryan/data/caltech/data-USA/images/set*'))[6:]
+            setnames = sorted(glob.glob(prefix+'set*'))[6:]
         else:
-            setnames = sorted(glob.glob('/home/ryan/data/caltech/data-USA/images/set*'))[:6]
+            setnames = sorted(glob.glob(prefix+'set*'))[:6]
         Vnames = []
         for setname in setnames:
             Vnames += sorted(glob.glob(setname+'/V*'))
         filenames = []
         for Vname in Vnames:
-            filenames += sorted(glob.glob(Vname+'/*jpg'))
+            filenames += sorted(glob.glob(Vname+'/*'+suffix))
     elif 'inria' in dataset_dir:
         filenames = sorted(glob.glob('/home/ryan/data/'+phase+'/pos/*png'))
     else:
         raise ValueError()
     return filenames
  
-def save_bbox(dir, img_idx, sc_lst):
-    """
-    save bboxes of an image
-    PASCAL format: (w_s, h_s, w, h) // Starting from upper-left corner
+def break_filename(filename, dataset_dir):
+    if 'data-USA' in dataset_dir:
+        set_name = filename[-21:-16]
+        V_name = filename[-15:-11]
+        frame_name = filename[-10:-4]
+        frame_num = int(frame_name[1:])
+    else:
+        raise ValueError()
+    return set_name, V_name, frame_name, frame_num
 
-    take:
-    dir: saving directory
-    img_idx: index number of the image
-    sc_lst: score tuples (i, j, half_h, half_w, score )
-    """
-    if not os.path.exists(dir):
-        os.makedirs(dir)
-    idx = str(img_idx)
-    text_name = 'I' + idx.zfill(5) + '.txt'
-    print text_name
-    try:
-        os.remove(dir+'/'+text_name)
-    except OSError:
-        pass
-    text = open(dir+'/'+text_name, 'w+')
-    for sc in sc_lst:
-        sc2w0 = str(int(sc[1]-sc[3]))
-        sc2w1 = str(int(sc[0]-sc[2]))
-        sc2w2 = str(int(sc[3]*2))
-        sc2w3 = str(int(sc[2]*2))
-        sc2w4 = str(sc[4])
-        text.write(sc2w0+' '+sc2w1+' '+sc2w2+' '+sc2w3+' '+sc2w4+'\n')
-    text.close()
+def mkdir(tar_dir):
+    if not os.path.exists(tar_dir):
+        os.makedirs(tar_dir)
 
-
-def save_bbox_caltech(dir, img_idx, sc_lst, V_name='V000', dataset='inria'):
+def save_bbox(tar_dir, frame_num, sc_lst, V_name, dataset_dir):
     """
     save bboxes of an image in a Caltech bbox file
-    PASCAL format: (w_s, h_s, w, h) // Starting from upper-left corner
 
     take:
-    dir: saving directory
+    tar_dir: saving directory
     img_idx: index number of the image
-    sc_lst: score tuples (i, j, half_h, half_w, score )
+    sc_lst: (w_s, h_s, w, h, sc) // Starting from upper-left corner
     """
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    if not os.path.exists(tar_dir):
+        os.makedirs(tar_dir)
     text_name = V_name + '.txt'
 
-    if (img_idx == 0 and dataset=='inria') or (img_idx == 29 and dataset=='caltech'):
+    if frame_num == 29:
         try:
-            os.remove(dir+'/'+text_name)
+            os.remove(tar_dir+'/'+text_name)
         except OSError:
             pass
-        text = open(dir+'/'+text_name, 'w+')
+        text = open(tar_dir+'/'+text_name, 'w+')
     else:
-        text = open(dir+'/'+text_name, 'a')
-
-    # For Caltech format, we need to sort boxes according to its scores
-    sc_lst.sort(key=operator.itemgetter(4), reverse=True)
+        text = open(tar_dir+'/'+text_name, 'a')
 
     for sc in sc_lst:
-        sc2w0 = str(int(sc[1]-sc[3]))
-        sc2w1 = str(int(sc[0]-sc[2]))
-        sc2w2 = str(int(sc[3]*2))
-        sc2w3 = str(int(sc[2]*2))
-        sc2w4 = str(sc[4])
-        text.write(str(img_idx+1)+' '+sc2w0+' '+sc2w1+' '+sc2w2+' '+sc2w3+' '+sc2w4+'\n')
+        text.write(str(frame_num)+' '+str(sc[0])+' '+str(sc[1])+' '+str(sc[2])+' '+str(sc[3])+' '+str(sc[4])+'\n')
     text.close()
 
  
@@ -116,35 +92,6 @@ def load_gtbox(dir, img_idx):
                 fr_t = (float(fr[0]), float(fr[1]), float(fr[2]), float(fr[3]), float(fr[4]))
             gt_lst.append(fr_t)
     return gt_lst
-
-def sc2inria(sc_lst):
-    """
-    transform a list of score tuples to INRIA format: left, right, top, bottom
-    take: a list of tuples [(i ,j , hh, hw, score)]
-    give: numpy arrays [(left, top, right, bottom, score), ...]
-    """
-    sc_lst_n = list()
-    for sc in sc_lst:
-        x0 = sc[1] - sc[3]
-        y0 = sc[0] - sc[2]
-        x1 = sc[1] + sc[3]
-        y1 = sc[0] + sc[2]        
-        sc_lst_n.append((x0, y0, x1, y1, sc[4]))
-    return numpy.array(sc_lst_n)
-
-def inria2sc(sc_lst):
-    """
-    take: (left, top, right, bottom, score)
-    give: (i, j, half_height, half_width, score)
-    """
-    sc_lst_n = list()
-    for sc in sc_lst:
-        i = (sc[3] + sc[1])/2
-        j = (sc[2] + sc[0])/2
-        half_h = (sc[3] - sc[1])/2
-        half_w = (sc[2] - sc[0])/2
-        sc_lst_n.append((i ,j, half_h, half_w, sc[4]))
-    return sc_lst_n
 
 
 def compute_overlap(box0 , box1):

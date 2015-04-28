@@ -34,7 +34,7 @@ src_feat_exp_dir = dataset_dir+cascade_dir+config['exp_id']+'_'+config['phase']+
 src_img_filenames = sorted(get_src_filenames(dataset_dir, config['phase']))
 assert len(src_img_filenames)!=0
 
-tar_exp_dir = cascade_dir+config['exp_id']+'_'+config['phase']+'_bbox/'
+tar_exp_dir = dataset_dir+cascade_dir+config['exp_id']+'_'+config['phase']+'_bbox/'
 tar_exp_dir += 'sc_' + str(config['bbox_score_thres'])
 tar_exp_dir += '_nms'+str(config['nms_thres'])+'/'
 mkdir(tar_exp_dir)

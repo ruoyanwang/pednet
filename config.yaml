@@ -7,6 +7,8 @@ gt_dir: '/home/ryan/data/caltech/data-USA/annotations/'
 eval_dir: '/home/ryan/data/caltech/data-USA/res/Ours/'
 
 ## ConvNet info
+non_cropped_input_h: 90
+non_cropped_input_w: 45
 input_h: 88
 input_w: 44
 pad_h: 1
@@ -27,11 +29,13 @@ data-USA_pyra_widths: [1000, 956, 800, 664, 552, 460, 384, 320, 264, 200]
 plot_feat: False
 
  # Configs for bounding boxes
-hard_mining_on: False
 nms_thres: 0.5
-bbox_score_thres: -2
+bbox_score_thres: 3.0
 
 print_max_score_on: False
 print_iter: 10
 
 plot_bbox_on: False
+
+hard_neg_mining_on: True
+hard_mining_thres: 0.2

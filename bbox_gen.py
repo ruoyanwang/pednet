@@ -12,7 +12,7 @@ import yaml
 sys.path.append("misc")
 from util import save_bbox, load_gtbox, mkdir, break_filename, get_src_filenames, plot_bbox
 from nms import nms_slow
-# from hard_mining import hard_mining
+from hnm import hard_neg_mining
 # from bb_regression import bb_reg_prepare_input
 
 
@@ -45,6 +45,7 @@ input_w = config['input_w']
 pad_h = config['pad_h']
 pad_w = config['pad_w']
 
+# Generate bounding boxes for each frame
 cnt = 0
 for src_img_filename in src_img_filenames:
     cnt += 1
@@ -85,20 +86,22 @@ for src_img_filename in src_img_filenames:
         except IndexError:
             pass
 
+    # Get ground truth annotations for the current frame
+    if 'data-USA' in dataset_dir:
+        gt_lst = load_gtbox(config['gt_dir']+'/'+set_name+'/'+V_name+'/', frame_num)
+    else:
+        raise ValueError()
+
     # Plotting
     if config['plot_bbox_on']:
-        if 'data-USA' in dataset_dir:
-            gt_lst = load_gtbox(config['gt_dir']+'/'+set_name+'/'+V_name+'/', frame_num)
-        else:
-            raise ValueError()
         plot_bbox(src_img_filename, tar_plot_dir, bbox_lst, gt_lst)
 
+    # Hard negative mining
+    if config['hard_neg_mining_on']:
+        hard_neg_mining(src_img_filename, bbox_lst, gt_lst, '/home/ryan/data/caltech/data-USA/train/hard_mining/'+config['cascade'], config)
 
 
 """
-    if phase == 'train' and HARD_MINING:
-        hard_mining(src_filename, dt_lst, gt_lst, tar_dir='/home/ryan/data/'+dataset+'/train/hard_mining/round'+round_no, dataset=dataset)
-
     # Save "good" patches and dt/gt location 
     if BB_REG:
         # gt_lst = load_gtbox(GT_PATH, int(src_filename[-9:-4]))

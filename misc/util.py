@@ -3,7 +3,11 @@ import os
 import sys
 import operator
 import numpy
+import scipy
 import glob
+import matplotlib
+import matplotlib.pyplot as plt
+
 
 def get_src_filenames(dataset_dir, phase, prefix='/home/ryan/data/caltech/data-USA/images/', suffix='jpg'):
     print "Collecting filenames of", dataset_dir
@@ -54,45 +58,79 @@ def save_bbox(tar_dir, frame_num, sc_lst, V_name, dataset_dir):
         os.makedirs(tar_dir)
     text_name = V_name + '.txt'
 
-    if frame_num == 29:
-        try:
-            os.remove(tar_dir+'/'+text_name)
-        except OSError:
-            pass
-        text = open(tar_dir+'/'+text_name, 'w+')
+    if 'data-USA' in dataset_dir:
+        if frame_num == 29:
+            try:
+                os.remove(tar_dir+'/'+text_name)
+            except OSError:
+                pass
+            text = open(tar_dir+'/'+text_name, 'w+')
+        else:
+            text = open(tar_dir+'/'+text_name, 'a')
     else:
-        text = open(tar_dir+'/'+text_name, 'a')
+        raise ValueError()
 
     for sc in sc_lst:
-        text.write(str(frame_num)+' '+str(sc[0])+' '+str(sc[1])+' '+str(sc[2])+' '+str(sc[3])+' '+str(sc[4])+'\n')
+        text.write(str(frame_num+1)+','+str(int(sc[0]))+','+str(int(sc[1]))+','+str(int(sc[2]))+','+str(int(sc[3]))+','+str(sc[4])+'\n')
     text.close()
 
  
-def load_gtbox(dir, img_idx):
+def load_gtbox(src_dir, img_idx):
     """
     load bboxes text files in PASCAL formats
 
     take:
     img_idx: int 
     give:
-    gt_lst: a list with tuples in (left, top, width, height)
+    gt_lst: a list of tuples in PASCAL format
     """
-    print dir, img_idx
     gt_lst = list()
     text_name = str(img_idx)
-    with open(dir+'I'+text_name.zfill(5)+'.txt','r') as f:
+    with open(src_dir+'I'+text_name.zfill(5)+'.txt','r') as f:
         for line in f:
             if line.startswith('%'):
                 continue
-            if line.startswith('pe'):
+            if line.startswith('per'):
                 fr = line.split()[1:5]
                 fr_t = (int(fr[0]), int(fr[1]), int(fr[2]), int(fr[3]))
+            elif line.startswith('peo'):
+                continue
             else:
                 fr = line.split()[:5]
                 fr_t = (float(fr[0]), float(fr[1]), float(fr[2]), float(fr[3]), float(fr[4]))
             gt_lst.append(fr_t)
     return gt_lst
 
+
+def plot_bbox(src_img_filename, tar_dir, dt_lst, gt_lst=None):
+    """
+    Plot bboxes on source images.
+    Take: 
+    src_img_filename
+    tar_dir: saving dir
+    dt_lst: detection bboxes, in PASCAL format
+    gt_lst: ground truth bboxes (optional)
+    """
+    if 'data-USA' in src_img_filename:
+        set_name, V_name, frame_name, frame_num = break_filename(src_img_filename, 'data-USA')
+    else:
+        raise ValueError()
+    src_img = scipy.misc.imread(src_img_filename)
+    plt.imshow(src_img)
+    ax = plt.gca()
+
+    for sc in dt_lst:
+        ax.add_patch(matplotlib.patches.Rectangle((sc[0],sc[1]), sc[2], sc[3], alpha=1, facecolor='none', edgecolor='yellow', linewidth=2.0))
+
+    if gt_lst:
+        for sc in gt_lst:
+            ax.add_patch(matplotlib.patches.Rectangle((sc[0],sc[1]), sc[2], sc[3], alpha=1, facecolor='none', edgecolor='red', linewidth=2.0))
+
+    plt.savefig(tar_dir + set_name + '_' + V_name + '_' + src_img_filename[-9:-4] + '.png')
+
+    plt.close()
+
+    
 
 def compute_overlap(box0 , box1):
     """

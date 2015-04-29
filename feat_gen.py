@@ -24,7 +24,7 @@ with open('config.yaml', 'r') as f:
     config = yaml.load(f)
 dataset_dir = config['dataset_dir']
 cascade_dir = config['dataset_dir']+config[config['cascade']+'_dir']
-tar_exp_dir = cascade_dir+config['exp_id']+'_'+config['phase']+'_res/'
+tar_exp_dir = cascade_dir+config['exp_id']+'_'+config['phase']+'/feat/'
 models_dir = config['models_dir']
 
 src_filenames = get_src_filenames(dataset_dir, config['phase'])

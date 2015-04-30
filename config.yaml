@@ -2,31 +2,31 @@
 
 device_id: 0
 feat_sum_on: False
-cascade: 'cascade1'
+cascade: 'cascade0'
 dataset_dir: 'data/data-USA/'
 gt_dir: '/home/ryan/data/caltech/data-USA/annotations/'
 eval_dir: '/home/ryan/data/caltech/data-USA/res/Ours/'
 
 ## ConvNet info
-non_cropped_input_h: 90
-non_cropped_input_w: 45
-input_h: 88
-input_w: 44
+non_cropped_input_h: 82
+non_cropped_input_w: 41
+input_h: 80
+input_w: 40
 pad_h: 1
 pad_w: 0.5
 
 ## Cascade 0: Full convolution for proposals
  # Configs for feature pyramids
-exp_id: '15042900'
+exp_id: '15043000'
 phase: 'train'
-cascade0_model: 'vgg_iter_200.caffemodel'
-cascade1_model: 'vgg_iter_500.caffemodel'
+cascade0_model: 'cascade0_iter_200.caffemodel'
+cascade1_model: 'cascade1_iter_500.caffemodel'
 mean_file: 'misc/vgg_mean.npy'
 models_dir: 'models/'
 conv_prototxt: 'vgg_deploy.prototxt'
 full_conv_prototxt_prefix: 'vgg_deploy_fullconv_lv'
-data-USA_pyra_widths: [1000, 956, 800, 664, 552, 460, 384, 320, 264, 200]
-plot_feat: True
+data-USA_pyra_widths: [1020, 816, 628, 484, 368, 288, 220, 168, 132]
+plot_feat: False
 
  # Configs for bounding boxes
 nms_thres: 0.3

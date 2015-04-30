@@ -1,29 +1,26 @@
 ## Generate feature pyramids
 from __future__ import division
-import os
-import os.path
 import sys
 sys.path.append('../python')
 sys.path.append('misc')
 import caffe
 from caffe.proto import caffe_pb2
 import numpy as np
-import scipy
 import matplotlib.pyplot as plt
-import matplotlib.colors as mc
 import glob
 import cv2
 import yaml
+import time
 
 from net_init import fullconv_net_init
-from util import get_src_filenames
+from util import get_src_filenames, mkdir
 
 
 # Unpack configs
 with open('config.yaml', 'r') as f:
     config = yaml.load(f)
 dataset_dir = config['dataset_dir']
-cascade_dir = config['dataset_dir']+config[config['cascade']+'_dir']
+cascade_dir = config['dataset_dir']+config['cascade']+'/'
 tar_exp_dir = cascade_dir+config['exp_id']+'_'+config['phase']+'/feat/'
 models_dir = config['models_dir']
 
@@ -36,6 +33,7 @@ else:
 num_lv = len(pyra_widths)
 print "Num of pyramid levels:", num_lv
 
+start_time = time.time()
 # Generate feature pyramids
 for lv in range(num_lv):
     convnet = fullconv_net_init(models_dir+config['conv_prototxt'], models_dir+config['full_conv_prototxt_prefix']+str(lv)+'.prototxt', cascade_dir+config[config['cascade']+'_model'], config['mean_file'], config['device_id'], dataset_dir, lv)
@@ -46,8 +44,7 @@ for lv in range(num_lv):
             filename_prefix = src_filename[-10:-4]
         else:
             raise ValueError()
-        if not os.path.exists(tar_file_dir):
-                os.makedirs(tar_file_dir)
+        mkdir(tar_file_dir)
 
         img = caffe.io.load_image(src_filename)
         conv_in =  [convnet.preprocess('data', img)]
@@ -66,5 +63,5 @@ for lv in range(num_lv):
             plt.savefig(savename+'_res.png')
             plt.close()
 
-
+print "It takes", (time.time() - start_time), "s"
 

@@ -1,7 +1,8 @@
 ## Configuration that contains directory paths ##
 
 device_id: 0
-cascade: 'cascade0'
+feat_sum_on: False
+cascade: 'cascade1'
 dataset_dir: 'data/data-USA/'
 gt_dir: '/home/ryan/data/caltech/data-USA/annotations/'
 eval_dir: '/home/ryan/data/caltech/data-USA/res/Ours/'
@@ -16,26 +17,28 @@ pad_w: 0.5
 
 ## Cascade 0: Full convolution for proposals
  # Configs for feature pyramids
-cascade0_dir: 'cascade0/'
-exp_id: '15042700'
+exp_id: '15042900'
 phase: 'train'
 cascade0_model: 'vgg_iter_200.caffemodel'
+cascade1_model: 'vgg_iter_500.caffemodel'
 mean_file: 'misc/vgg_mean.npy'
 models_dir: 'models/'
 conv_prototxt: 'vgg_deploy.prototxt'
 full_conv_prototxt_prefix: 'vgg_deploy_fullconv_lv'
-
 data-USA_pyra_widths: [1000, 956, 800, 664, 552, 460, 384, 320, 264, 200]
-plot_feat: False
+plot_feat: True
 
  # Configs for bounding boxes
-nms_thres: 0.5
-bbox_score_thres: 3.0
+nms_thres: 0.3
+bbox_score_thres: 0.0
 
 print_max_score_on: False
 print_iter: 10
 
 plot_bbox_on: False
 
-hard_neg_mining_on: True
+hard_neg_mining_on: False
 hard_mining_thres: 0.2
+
+## Feat summation
+feat_sum_exp_dir: 'sum/15043000/'

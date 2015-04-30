@@ -13,31 +13,35 @@ sys.path.append("misc")
 from util import save_bbox, load_gtbox, mkdir, break_filename, get_src_filenames, plot_bbox
 from nms import nms_slow
 from hnm import hard_neg_mining
-# from bb_regression import bb_reg_prepare_input
-
 
 with open('config.yaml', 'r') as f:
     config = yaml.load(f)
 dataset_dir = config['dataset_dir']
-cascade_dir = config[config['cascade']+'_dir']
 if 'data-USA' in dataset_dir:
     pyra_widths = config['data-USA_pyra_widths']
     num_pyra_lv = len(pyra_widths)
 else:
     raise ValueError()
 print "Dataset:", dataset_dir
-print "Generating bounding boxes for", config['cascade']
+
 
 # Get filenames of src imgs and feat pyramids
-src_feat_exp_dir = dataset_dir+cascade_dir+config['exp_id']+'_'+config['phase']+'/feat/' 
 src_img_filenames = sorted(get_src_filenames(dataset_dir, config['phase']))
 assert len(src_img_filenames)!=0
 
-tar_exp_dir = dataset_dir+cascade_dir+config['exp_id']+'_'+config['phase']+'/bbox/'
+if config['feat_sum_on']:
+    dir_prefix = dataset_dir+config['feat_sum_exp_dir']
+else:
+    cascade_dir = config['cascade']+'/'
+    dir_prefix = dataset_dir+cascade_dir+config['exp_id']+'_'+config['phase']+'/'
+    print "Generating bounding boxes for", config['cascade']
+
+src_feat_exp_dir = dir_prefix+'feat/' 
+tar_exp_dir = dir_prefix + 'bbox/'
+tar_plot_dir = dir_prefix+'plot/'    
 tar_exp_dir += 'sc_' + str(config['bbox_score_thres'])
 tar_exp_dir += '_nms'+str(config['nms_thres'])+'/'
 mkdir(tar_exp_dir)
-tar_plot_dir = dataset_dir+cascade_dir+config['exp_id']+'_'+config['phase']+'/plot/'
 mkdir(tar_plot_dir)
 
 input_h = config['input_h']

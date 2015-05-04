@@ -156,3 +156,9 @@ def compute_overlap(box0 , box1):
     overlap = float(w * h) / (area0+area1-w*h)
    
     return overlap
+
+def normalize(mat, max_v, min_v):
+    if not type(mat).__module__ == numpy.__name__:
+        raise TypeError("input must be a numpy array")
+    return (mat-min_v)/(max_v-min_v)
+        

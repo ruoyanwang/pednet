@@ -1,11 +1,16 @@
 ## Configuration that contains directory paths ##
 
 device_id: 1
-feat_sum_on: True
-cascade: 'cascade2'
+feat_sum_on: False
+cascade: 'cascade0'
 dataset_dir: 'data/data-USA/'
 gt_dir: '/home/ryan/data/caltech/data-USA/annotations/'
 eval_dir: '/home/ryan/data/caltech/data-USA/res/Ours/'
+
+## Prepare negtive data
+acf_data_dir: '/home/ryan/ccf/data/Caltech/train30/images/'
+acf_anno_dir: 'data/data-USA/'
+acf_tar_dir: 'data/acf_neg/'
 
 ## ConvNet info
 non_cropped_input_h: 82
@@ -17,9 +22,9 @@ pad_w: 0.5
 
 ## Cascade 0: Full convolution for proposals
  # Configs for feature pyramids
-exp_id: '15043000'
+exp_id: '15052400'
 phase: 'train'
-cascade0_model: 'cascade0_iter_200.caffemodel'
+cascade0_model: 'cascade0_iter_500.caffemodel' # from acf!!
 cascade1_model: 'cascade1_iter_600.caffemodel'
 cascade2_model: 'cascade2_iter_200.caffemodel'
 mean_file: 'misc/vgg_mean.npy'
@@ -31,7 +36,7 @@ plot_feat: False
 
  # Configs for bounding boxes
 nms_thres: 0.3
-bbox_score_thres: 0.8
+bbox_score_thres: 0.0
 
 print_max_score_on: False
 print_iter: 10
@@ -42,5 +47,5 @@ hard_neg_mining_on: True
 hard_mining_thres: 0.2
 
 ## Feat summation
-feat_sum_exp_dir: 'sum/15050402/'
-weights: [8, 1, 2]
+feat_sum_exp_dir: 'sum/15050403/'
+weights: [1, 1, 1]

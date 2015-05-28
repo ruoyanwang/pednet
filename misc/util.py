@@ -4,6 +4,7 @@ import sys
 import operator
 import numpy
 import scipy
+import cv2
 import glob
 import matplotlib
 import matplotlib.pyplot as plt
@@ -102,6 +103,19 @@ def load_gtbox(src_dir, img_idx):
     return gt_lst
 
 
+def crop_patch(src_img, bbox, tar_h, tar_w):
+    """
+    crop and resize a patch out of the image
+    """
+
+    patch = src_img[bbox[1]:bbox[1]+bbox[3], bbox[0]:bbox[0]+bbox[2], :]
+    if 0 in patch.shape:
+        return numpy.zeros((tar_h, tar_w))
+
+    wrapped_patch =cv2.resize(patch, (0,0), fx=tar_w/patch.shape[1], fy=tar_h/patch.shape[0]) 
+    return wrapped_patch
+
+
 def plot_bbox(src_img_filename, tar_dir, dt_lst, gt_lst=None):
     """
     Plot bboxes on source images.
@@ -132,14 +146,14 @@ def plot_bbox(src_img_filename, tar_dir, dt_lst, gt_lst=None):
 
     
 
-def compute_overlap(box0 , box1):
+def get_IoU(box0 , box1):
     """
-    Take: boxes in the format of (l, t, r, b)
+    Take: boxes in PASCAL format
 
-    Give: overlap area of two boxes
+    Give: IoU of two boxes
     """
-    l0, t0, r0, b0 = box0[0], box0[1], box0[2], box0[3]
-    l1, t1, r1, b1 = box1[0], box1[1], box1[2], box1[3]
+    l0, t0, r0, b0 = box0[0], box0[1], box0[2]+box0[0], box0[3]+box0[1]
+    l1, t1, r1, b1 = box1[0], box1[1], box1[2]+box1[0], box1[3]+box1[1]
     
     area0 = (r0 - l0 + 1) * (b0 - t0 + 1)
     area1 = (r1 - l1 + 1) * (b1 - t1 + 1)

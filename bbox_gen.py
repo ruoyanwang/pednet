@@ -64,14 +64,14 @@ for src_img_filename in src_img_filenames:
         bbox_h =  input_h / bbox_sc_ratio
         bbox_w = input_w / bbox_sc_ratio
 
-        dist_w_ratio = src_img_w / feat_w 
-        dist_h_ratio = src_img_h / feat_h
+        dist_w_ratio = src_img_w / (feat_w+pad_w*2) 
+        dist_h_ratio = src_img_h / (feat_h+pad_h*2)
         # PASCAL format: (i, j, width, height, sc)
         for i in range(feat.shape[1]):
             for j in range(feat.shape[0]):
-                left_i = i * dist_w_ratio
-                top_j = j * dist_h_ratio
-                bbox_lst.append(tuple((left_i, top_j, bbox_w, bbox_h, feat[j, i])))
+                left_i = (i+pad_w+0.5) * dist_w_ratio
+                top_j = (j+pad_h+0.5) * dist_h_ratio
+                bbox_lst.append(tuple((left_i-bbox_w/2, top_j-bbox_h/2, bbox_w, bbox_h, feat[j, i])))
 
     bbox_lst.sort(key=operator.itemgetter(4), reverse=True)
     tmp_lst = [sc for sc in bbox_lst if sc[4] >= config['bbox_score_thres']]

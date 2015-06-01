@@ -31,7 +31,7 @@ plot_feat: False
 
  # Configs for bounding boxes
 nms_thres: 0.3
-bbox_score_thres: 0.0
+bbox_score_thres: 0.7
 
 print_max_score_on: False
 print_iter: 10
@@ -39,5 +39,5 @@ print_iter: 10
 plot_bbox_on: False
 
 hard_neg_mining_on: True
-hard_mining_thres: 0.2
+hard_mining_thres: 0.25
 

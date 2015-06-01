@@ -29,12 +29,9 @@ print "Dataset:", dataset_dir
 src_img_filenames = sorted(get_src_filenames(dataset_dir, config['phase']))
 assert len(src_img_filenames)!=0
 
-if config['feat_sum_on']:
-    dir_prefix = dataset_dir+config['feat_sum_exp_dir']
-else:
-    cascade_dir = config['cascade']+'/'
-    dir_prefix = dataset_dir+cascade_dir+config['exp_id']+'_'+config['phase']+'/'
-    print "Generating bounding boxes for", config['cascade']
+cascade_dir = config['cascade']+'/'
+dir_prefix = dataset_dir+cascade_dir+config['exp_id']+'_'+config['phase']+'/'
+print "Generating bounding boxes for", config['cascade']
 
 src_feat_exp_dir = dir_prefix+'feat/' 
 tar_exp_dir = dir_prefix + 'bbox/'
@@ -102,7 +99,7 @@ for src_img_filename in src_img_filenames:
 
     # Hard negative mining
     if config['hard_neg_mining_on']:
-        hard_neg_mining(src_img_filename, bbox_lst, gt_lst, '/home/ryan/data/caltech/data-USA/train/hard_mining/'+config['cascade'], config)
+        hard_neg_mining(src_img_filename, bbox_lst, gt_lst, '/home/ryan/ccf/data/Caltech/train01/hard_mining/', config)
 
 
 """

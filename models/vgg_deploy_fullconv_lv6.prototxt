@@ -2,8 +2,8 @@ name: "VGG_ILSVRC_16_layers"
 input: "data"
 input_dim: 1
 input_dim: 3
-input_dim: 165
-input_dim: 220
+input_dim: 120
+input_dim: 160
 layers {
   bottom: "data"
   top: "conv1_1"
@@ -271,24 +271,13 @@ layers {
 }
 layers {
   bottom: "conv5_3"
-  top: "pool5"
-  name: "pool5"
-  type: POOLING
-  pooling_param {
-    pool: MAX
-    kernel_size: 2
-    stride: 2
-  }
-}
-layers {
-  bottom: "pool5"
   top: "fc6_conv"
   name: "fc6_conv"
   type: CONVOLUTION
   convolution_param {
-    kernel_h: 3
-    kernel_w: 2
-    num_output: 2048
+    kernel_h: 8
+    kernel_w: 4
+    num_output: 4096
   }
 }
 layers {
@@ -312,7 +301,7 @@ layers {
   name: "fc7_conv"
   type: CONVOLUTION
   convolution_param {
-    num_output: 2048
+    num_output: 4096
     kernel_size: 1
   }
 }

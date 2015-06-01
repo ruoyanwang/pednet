@@ -1,37 +1,32 @@
 ## Configuration that contains directory paths ##
 
-device_id: 1
-feat_sum_on: False
+device_id: 0
 cascade: 'cascade0'
 dataset_dir: 'data/data-USA/'
 gt_dir: '/home/ryan/data/caltech/data-USA/annotations/'
 eval_dir: '/home/ryan/data/caltech/data-USA/res/Ours/'
 
-## Prepare negtive data
-acf_data_dir: '/home/ryan/ccf/data/Caltech/train30/images/'
-acf_anno_dir: 'data/data-USA/'
-acf_tar_dir: 'data/acf_neg/'
-
 ## ConvNet info
-non_cropped_input_h: 82
-non_cropped_input_w: 41
-input_h: 80
-input_w: 40
-pad_h: 1
-pad_w: 0.5
+non_cropped_input_h: 124
+non_cropped_input_w: 62
+input_h: 120
+input_w: 60
+pad_h: 3.5
+pad_w: 1.5
 
 ## Cascade 0: Full convolution for proposals
  # Configs for feature pyramids
-exp_id: '15052400'
+exp_id: '15053100'
 phase: 'train'
-cascade0_model: 'cascade0_iter_500.caffemodel' # from acf!!
+cascade0_model: 'cascade0_iter_2000.caffemodel' 
 cascade1_model: 'cascade1_iter_600.caffemodel'
 cascade2_model: 'cascade2_iter_200.caffemodel'
 mean_file: 'misc/vgg_mean.npy'
 models_dir: 'models/'
 conv_prototxt: 'vgg_deploy.prototxt'
 full_conv_prototxt_prefix: 'vgg_deploy_fullconv_lv'
-data-USA_pyra_widths: [1020, 816, 628, 484, 368, 288, 220, 168, 132]
+# data-USA_pyra_widths: [1020, 816, 628, 484, 368, 288, 220, 168, 132]
+data-USA_pyra_widths: [1204, 860, 614, 439, 313, 224, 160]
 plot_feat: False
 
  # Configs for bounding boxes
@@ -46,6 +41,3 @@ plot_bbox_on: False
 hard_neg_mining_on: True
 hard_mining_thres: 0.2
 
-## Feat summation
-feat_sum_exp_dir: 'sum/15050403/'
-weights: [1, 1, 1]

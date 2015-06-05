@@ -2,15 +2,23 @@ import caffe
 import numpy
 
 
-def net_init(src_proto, model, mean_file, device_id=1, dir='inria'):
+def net_init(config):
     "Load a network"
-    net = caffe.Net(src_proto, model)
+
+    src_proto = config['refinement_prototxt']
+    model = config['src_test_bbox_dir']+config['refinement_model']
+    mean_file = config['refinement_mean_file']
+    device_id = config['device_id']
+    w = config['input_w']
+    h = config['input_h']
+
+    net = caffe.Classifier(src_proto, model, mean_file=mean_file, channel_swap=(2,1,0), input_scale=255, image_dims=[w, h])
     net.set_mode_gpu()
     net.set_device(device_id)
-    net.set_phase_test()
-    net.set_mean('data', mean_file)
-    net.set_channel_swap('data', (2,1,0))
-    net.set_input_scale('data', 255.0)
+    # net.set_phase_test()
+    # net.set_mean('data', mean_file)
+    # net.set_
+    # net.set_input_scale('data', 255.0)
 
     return net
 

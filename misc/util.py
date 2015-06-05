@@ -76,29 +76,44 @@ def save_bbox(tar_dir, frame_num, sc_lst, V_name, dataset_dir):
     text.close()
 
  
-def load_gtbox(src_dir, img_idx):
+def load_gtbox(src_dir, img_idx, VorI='I'):
     """
     load bboxes text files in PASCAL formats
 
     take:
     img_idx: int 
+    VorI: flag indicating whether the src txt is gt of a video clip or a single frame
     give:
     gt_lst: a list of tuples in PASCAL format
     """
     gt_lst = list()
     text_name = str(img_idx)
-    with open(src_dir+'I'+text_name.zfill(5)+'.txt','r') as f:
+
+    if VorI == 'I':
+        src_txt_filename = src_dir+'I'+text_name.zfill(5)+'.txt'
+    elif VorI == 'V':
+        src_txt_filename = src_dir + '.txt'
+    else:
+        raise ValueError('VorI value error!')
+
+    with open(src_txt_filename , 'r') as f:
         for line in f:
             if line.startswith('%'):
                 continue
             if line.startswith('per'):
+                if line.startswith('person-f'):
+                    continue
                 fr = line.split()[1:5]
                 fr_t = (int(fr[0]), int(fr[1]), int(fr[2]), int(fr[3]))
             elif line.startswith('peo'):
                 continue
             else:
-                fr = line.split()[:5]
-                fr_t = (float(fr[0]), float(fr[1]), float(fr[2]), float(fr[3]), float(fr[4]))
+                assert VorI == 'V'
+                fr = line.split(',')[:6] # !!! 5
+                if str(img_idx+1) == fr[0]:
+                    fr_t = (float(fr[1]), float(fr[2]), float(fr[3]), float(fr[4]), float(fr[5])) #!!!
+                else:
+                    continue
             gt_lst.append(fr_t)
     return gt_lst
 

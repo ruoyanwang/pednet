@@ -1,7 +1,7 @@
-## Configuration that contains directory paths ##
+## Configurations
 
 device_id: 0
-cascade: 'cascade0'
+cascade: 'cascade3' 
 dataset_dir: 'data/data-USA/'
 gt_dir: '/home/ryan/data/caltech/data-USA/annotations/'
 eval_dir: '/home/ryan/data/caltech/data-USA/res/Ours/'
@@ -14,24 +14,26 @@ input_w: 60
 pad_h: 3.5
 pad_w: 1.5
 
-## Cascade 0: Full convolution for proposals
+## Full convolution for proposals
  # Configs for feature pyramids
-exp_id: '15053100'
-phase: 'train'
-cascade0_model: 'cascade0_iter_2000.caffemodel' 
-cascade1_model: 'cascade1_iter_600.caffemodel'
-cascade2_model: 'cascade2_iter_200.caffemodel'
+exp_id: '15060400' 
+phase: 'train' # train
+cascade0_model: 'cascade0_iter_20000.caffemodel' 
+cascade1_model: 'cascade1_iter_6000.caffemodel'
+cascade2_model: 'cascade2_iter_3200.caffemodel'
+cascade3_model: 'cascade3_iter_7600.caffemodel'
+
+
 mean_file: 'misc/vgg_mean.npy'
 models_dir: 'models/'
 conv_prototxt: 'vgg_deploy.prototxt'
 full_conv_prototxt_prefix: 'vgg_deploy_fullconv_lv'
-# data-USA_pyra_widths: [1020, 816, 628, 484, 368, 288, 220, 168, 132]
 data-USA_pyra_widths: [1204, 860, 614, 439, 313, 224, 160]
 plot_feat: False
 
  # Configs for bounding boxes
-nms_thres: 0.3
-bbox_score_thres: 0.7
+nms_thres: 0.4 # default 0.3!!!
+bbox_score_thres: 2.0
 
 print_max_score_on: False
 print_iter: 10
@@ -41,3 +43,8 @@ plot_bbox_on: False
 hard_neg_mining_on: True
 hard_mining_thres: 0.25
 
+## Refinement
+src_test_bbox_dir: 'data/data-USA/cascade3/15060300_test/bbox/sc_1.0_nms1.0/'
+refinement_model: 'refinement_iter_12000.caffemodel' # by default it's saved under src_test_bbox_dir
+refinement_prototxt: 'models/refinement_deploy.prototxt'
+refinement_mean_file: 'misc/refinement_mean.npy'

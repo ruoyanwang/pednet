@@ -38,7 +38,7 @@ start_time = time.time()
 for lv in range(num_lv):
     convnet = fullconv_net_init(models_dir+config['conv_prototxt'], models_dir+config['full_conv_prototxt_prefix']+str(lv)+'.prototxt', cascade_dir+config[config['cascade']+'_model'], config['mean_file'], config['device_id'], dataset_dir, lv)
     tar_lv_dir = tar_exp_dir + str(lv)+'/'
-    for src_filename in src_filenames[:20]:
+    for src_filename in src_filenames:
         if 'data-USA' in dataset_dir:
             tar_file_dir = tar_lv_dir+src_filename[-21:-10]
             filename_prefix = src_filename[-10:-4]
@@ -52,8 +52,8 @@ for lv in range(num_lv):
             conv_out = convnet.forward_all(data=np.asarray(conv_in))
             feat = conv_out['fc8_inria_conv'][0][1]
         else:
-            patch0 = img[:, :(320+30), :]
-            patch1 = img[:, (320-30):, :]
+            patch0 = img[:, :(320+29), :]
+            patch1 = img[:, (320-29):, :]
             conv_in = [convnet.preprocess('data', patch0)]
             conv_out = convnet.forward_all(data=np.asarray(conv_in))
             feat0 = conv_out['fc8_inria_conv'][0][1]
@@ -78,4 +78,3 @@ for lv in range(num_lv):
             plt.close()
 
 print "It takes", (time.time() - start_time), "s"
-

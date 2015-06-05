@@ -101,7 +101,6 @@ for src_img_filename in src_img_filenames:
     if config['hard_neg_mining_on']:
         hard_neg_mining(src_img_filename, bbox_lst, gt_lst, '/home/ryan/ccf/data/Caltech/train01/hard_mining/', config)
 
-
 """
     # Save "good" patches and dt/gt location 
     if BB_REG:

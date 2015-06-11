@@ -124,8 +124,8 @@ def crop_patch(src_img, bbox, tar_h, tar_w):
     """
 
     patch = src_img[bbox[1]:bbox[1]+bbox[3], bbox[0]:bbox[0]+bbox[2], :]
-    if 0 in patch.shape:
-        return numpy.zeros((tar_h, tar_w))
+    # if 0 in patch.shape:
+    #    return numpy.zeros((tar_h, tar_w))
 
     wrapped_patch =cv2.resize(patch, (0,0), fx=tar_w/patch.shape[1], fy=tar_h/patch.shape[0]) 
     return wrapped_patch

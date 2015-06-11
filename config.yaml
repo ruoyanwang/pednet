@@ -16,8 +16,8 @@ pad_w: 1.5
 
 ## Full convolution for proposals
  # Configs for feature pyramids
-exp_id: '15060400' 
-phase: 'train' # train
+exp_id: '15060300' 
+phase: 'test' # train
 cascade0_model: 'cascade0_iter_20000.caffemodel' 
 cascade1_model: 'cascade1_iter_6000.caffemodel'
 cascade2_model: 'cascade2_iter_3200.caffemodel'
@@ -32,7 +32,7 @@ data-USA_pyra_widths: [1204, 860, 614, 439, 313, 224, 160]
 plot_feat: False
 
  # Configs for bounding boxes
-nms_thres: 0.4 # default 0.3!!!
+nms_thres: 0.5 # default 0.3!!!
 bbox_score_thres: 2.0
 
 print_max_score_on: False
@@ -41,10 +41,10 @@ print_iter: 10
 plot_bbox_on: False
 
 hard_neg_mining_on: True
-hard_mining_thres: 0.25
+hard_mining_thres: 0.3
 
 ## Refinement
 src_test_bbox_dir: 'data/data-USA/cascade3/15060300_test/bbox/sc_1.0_nms1.0/'
 refinement_model: 'refinement_iter_12000.caffemodel' # by default it's saved under src_test_bbox_dir
 refinement_prototxt: 'models/refinement_deploy.prototxt'
-refinement_mean_file: 'misc/refinement_mean.npy'
+refinement_mean_file: 'misc/vgg_mean.npy'

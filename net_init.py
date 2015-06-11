@@ -12,7 +12,8 @@ def net_init(config):
     w = config['input_w']
     h = config['input_h']
 
-    net = caffe.Classifier(src_proto, model, mean_file=mean_file, channel_swap=(2,1,0), input_scale=255, image_dims=[w, h])
+    net = caffe.Classifier(src_proto, model, mean_file=mean_file, channel_swap=(2, 1, 0), input_scale=255, image_dims=[w, h])
+    # (2,1,0) input_scale=255,
     net.set_mode_gpu()
     net.set_device(device_id)
     # net.set_phase_test()

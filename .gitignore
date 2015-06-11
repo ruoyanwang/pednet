@@ -1,6 +1,9 @@
 data/
+ref/
 *~
 *#
 *pyc
 *npy
 *binary*
+*png
+*jpg

@@ -10,7 +10,7 @@ import scipy
 import scipy.misc
 import yaml
 import caffe
-
+import random
 from net_init import net_init
 from util import save_bbox, load_gtbox, crop_patch, mkdir, break_filename, get_src_filenames, plot_bbox
 from nms import nms_slow
@@ -25,6 +25,8 @@ else:
     raise ValueError()
 print "Dataset:", dataset_dir
 
+# Set up ConvNet
+# convnet = net_init(config)
 
 # Collect filenames of src imgs and bboxes
 config['phase'] = 'test'
@@ -38,21 +40,22 @@ input_w = config['input_w']
 
 # Generate bounding boxes for each frame
 cnt = 0
-
+error_rate = 0
 for src_img_filename in src_img_filenames:
     print src_img_filename
-    cnt += 1
+    cnt = 0
     src_img = scipy.misc.imread(src_img_filename)
     set_name, V_name, frame_name, frame_num = break_filename(src_img_filename, dataset_dir)
+    ###
+    if '6' not in set_name:
+        continue
 
+    ###
+    proposal_lst = list()
     bbox_lst = list()
-    dt_lst = load_gtbox(tar_ref_dir+set_name+'/'+V_name, frame_num, VorI='V')
-    dt_lst.sort(key=operator.itemgetter(4), reverse=True)
-    tmp_lst = [sc for sc in dt_lst if sc[4] >= 0.01]
-
-    dt_lst = tmp_lst
-    # dt_lst = nms_slow(dt_lst, 0.9)
-    print len(dt_lst)
-    save_bbox(tar_ref_dir+'/'+set_name+'_filtered', frame_num, dt_lst, V_name, config['dataset_dir'])
-
-
+    gt_lst = load_gtbox(dir_prefix+set_name+'/'+V_name, frame_num, VorI='V')
+    for gt in gt_lst:
+        proposal = crop_patch(src_img, gt, config['non_cropped_input_h'], config['non_cropped_input_w'])
+        # proposal_lst.append(proposal)
+        scipy.misc.imsave('ref/proposals/'+set_name+V_name+'_'+str(frame_num).zfill(4)+'_'+str(cnt).zfill(4)+'.png', proposal)
+        cnt += 1

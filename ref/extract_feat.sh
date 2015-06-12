@@ -1,0 +1,1 @@
+../../build/tools/extract_features.bin _iter_12000 vgg_deploy.prototxt prob ref1_neg_train_feat 2000 lmdb "GPU" 0

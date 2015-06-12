@@ -1,9 +1,18 @@
 name: "VGG_ILSVRC_16_layers"
-input: "data"
-input_dim: 1
-input_dim: 3
-input_dim: 903
-input_dim: 661
+layers {
+  name: "data"
+  type: DATA
+  top: "data"
+  top: "label"
+  data_param {
+    source: "/home/ryan/caffe-0.999/pednet/ref/ref1_neg_train_leveldb"
+    mean_file: "/home/ryan/caffe-0.999/caltech/vgg_mean.binaryproto"
+    batch_size: 200
+    crop_h: 120
+    crop_w: 60
+    mirror: false
+  }
+}
 layers {
   bottom: "data"
   top: "conv1_1"
@@ -271,24 +280,30 @@ layers {
 }
 layers {
   bottom: "conv5_3"
-  top: "fc6_conv"
-  name: "fc6_conv"
-  type: CONVOLUTION
-  convolution_param {
-    kernel_h: 8
-    kernel_w: 4
+  top: "fc6_c"
+  name: "fc6_c"
+  type: INNER_PRODUCT
+  inner_product_param {
     num_output: 4096
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
   }
 }
 layers {
-  bottom: "fc6_conv"
-  top: "fc6_conv"
+  bottom: "fc6_c"
+  top: "fc6_c"
   name: "relu6"
   type: RELU
 }
 layers {
-  bottom: "fc6_conv"
-  top: "fc6_conv"
+  bottom: "fc6_c"
+  top: "fc6_c"
   name: "drop6"
   type: DROPOUT
   dropout_param {
@@ -296,37 +311,60 @@ layers {
   }
 }
 layers {
-  bottom: "fc6_conv"
-  top: "fc7_conv"
-  name: "fc7_conv"
-  type: CONVOLUTION
-  convolution_param {
+  bottom: "fc6_c"
+  top: "fc7_c"
+  name: "fc7_c"
+  type: INNER_PRODUCT
+  inner_product_param {
     num_output: 4096
-    kernel_size: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
   }
 }
 layers {
-  bottom: "fc7_conv"
-  top: "fc7_conv"
+  bottom: "fc7_c"
+  top: "fc7_c"
   name: "relu7"
   type: RELU
 }
 layers {
-  bottom: "fc7_conv"
-  top: "fc7_conv"
+  bottom: "fc7_c"
+  top: "fc7_c"
   name: "drop7"
   type: DROPOUT
   dropout_param {
     dropout_ratio: 0.5
-v  }
+  }
 }
 layers {
-  bottom: "fc7_conv"
-  top: "fc8_inria_conv"
-  name: "fc8_inria_conv"
-  type: CONVOLUTION
-  convolution_param {
-    kernel_size: 1
+  bottom: "fc7_c"
+  top: "fc8_c"
+  name: "fc8_c"
+  type: INNER_PRODUCT
+  blobs_lr: 10
+  blobs_lr: 20
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
     num_output: 2
   }
+}
+layers {
+  bottom: "fc8_c"
+  top: "prob"
+  name: "prob"
+  type: SOFTMAX
+}
+layers {
+  name: "accuracy"
+  type: ACCURACY
+  bottom: "prob"
+  bottom: "label"
+  top: "accuracy"
 }

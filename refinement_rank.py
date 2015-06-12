@@ -35,7 +35,7 @@ config['phase'] = 'test'
 src_img_filenames = sorted(get_src_filenames(dataset_dir, config['phase']))
 assert len(src_img_filenames)!=0
 dir_prefix = config['src_test_bbox_dir']
-tar_ref_dir = dir_prefix+'ref/' 
+tar_ref_dir = dir_prefix+config['ref']+'/' 
 mkdir(tar_ref_dir)
 input_h = config['input_h']
 input_w = config['input_w']
@@ -61,12 +61,12 @@ for src_img_filename in src_img_filenames:
 
     bbox_lst.sort(key=operator.itemgetter(4), reverse=True)
     print "num of bbox:", len(bbox_lst)
-    tmp_lst = [sc for sc in bbox_lst if sc[4] > 0.5]
+    tmp_lst = [sc for sc in bbox_lst if sc[4] > 0.000001]
     print "num of bbox > 0.5:", len(tmp_lst)
 
 
-    bbox_lst = nms_slow(bbox_lst, config['nms_thres'])
-    save_bbox(tar_ref_dir+'/'+set_name, frame_num, bbox_lst, V_name, config['dataset_dir'])
+    # bbox_lst = nms_slow(bbox_lst, config['nms_thres']) # tmp_lst!!!!
+    save_bbox(tar_ref_dir+'/'+set_name, frame_num, tmp_lst, V_name, config['dataset_dir']) # tmp!!!
 
 
 

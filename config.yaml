@@ -44,6 +44,7 @@ hard_neg_mining_on: True
 hard_mining_thres: 0.3
 
 ## Refinement
+ref: 'ref0'
 src_test_bbox_dir: 'data/data-USA/cascade3/15060300_test/bbox/sc_1.0_nms1.0/'
 refinement_model: 'refinement_iter_12000.caffemodel' # by default it's saved under src_test_bbox_dir
 refinement_prototxt: 'models/refinement_deploy.prototxt'

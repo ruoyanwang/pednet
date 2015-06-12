@@ -27,13 +27,7 @@ def net_init(config):
 def fullconv_net_init(src_proto, tar_proto, model, mean_file, device_id, dataset, lv=0):
     """ Transfer prototxts and initialize a network"""
     net = caffe.Net(src_proto, model)
-    """
-    patch = caffe.io.load_image('/home/ryan/data/caltech/data-USA/train/cropped_pos/00010.png')
-    out = net.forward_all(data=numpy.asarray(\
-                            [net.preprocess('data', patch)]))
-    print out.keys()
-    print out['pool5'].shape
-    """
+
     params = ['fc6_c', 'fc7_c', 'fc8_c']
     # fc_params = {name: (weights, biases)}
     fc_params = {pr: (net.params[pr][0].data, net.params[pr][1].data) for pr in params}

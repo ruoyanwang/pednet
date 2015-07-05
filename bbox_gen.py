@@ -46,7 +46,7 @@ pad_w = config['pad_w']
 
 # Generate bounding boxes for each frame
 cnt = 0
-for src_img_filename in src_img_filenames[:15]:
+for src_img_filename in src_img_filenames:
     cnt += 1
     src_img = scipy.misc.imread(src_img_filename)
     set_name, V_name, frame_name, frame_num = break_filename(src_img_filename, dataset_dir)

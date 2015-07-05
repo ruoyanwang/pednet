@@ -318,7 +318,7 @@ layers {
   type: DROPOUT
   dropout_param {
     dropout_ratio: 0.5
-v  }
+  }
 }
 layers {
   bottom: "fc7_conv"

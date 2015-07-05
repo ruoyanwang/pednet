@@ -32,7 +32,6 @@ def fullconv_net_init(src_proto, tar_proto, model, mean_file, device_id, dataset
     # fc_params = {name: (weights, biases)}
     fc_params = {pr: (net.params[pr][0].data, net.params[pr][1].data) for pr in params}
 
-
     net_full_conv = caffe.Net(tar_proto, model)
     params_full_conv = ['fc6_conv', 'fc7_conv', 'fc8_inria_conv']
     # conv_params = {name: (weights, biases)}

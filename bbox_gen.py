@@ -2,12 +2,10 @@
 from __future__ import division
 import os
 import sys
-import glob
 import operator
 import numpy
 import scipy
 import scipy.misc
-import commands
 import yaml
 sys.path.append("misc")
 from util import save_bbox, load_gtbox, mkdir, break_filename, get_src_filenames, plot_bbox
@@ -48,7 +46,7 @@ pad_w = config['pad_w']
 
 # Generate bounding boxes for each frame
 cnt = 0
-for src_img_filename in src_img_filenames:
+for src_img_filename in src_img_filenames[:15]:
     cnt += 1
     src_img = scipy.misc.imread(src_img_filename)
     set_name, V_name, frame_name, frame_num = break_filename(src_img_filename, dataset_dir)

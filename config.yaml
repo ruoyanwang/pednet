@@ -1,7 +1,7 @@
 ## Configurations
 
-device_id: 0
-cascade: 'cascade0' 
+device_id: 1
+cascade: 'cascade3' 
 dataset_dir: 'data/data-USA/'
 gt_dir: '/home/ryan/data/caltech/data-USA/annotations/'
 eval_dir: '/home/ryan/data/caltech/data-USA/res/Ours/'
@@ -16,12 +16,12 @@ pad_w: 1.5
 
 ## Full convolution for proposals
  # Configs for feature pyramids
-exp_id: '15070400' 
-phase: 'train' # train
+exp_id: '15071000' 
+phase: 'train' 
 cascade0_model: '_iter_6000' 
-cascade1_model: 'cascade1_iter_6000.caffemodel'
-cascade2_model: 'cascade2_iter_3200.caffemodel'
-cascade3_model: 'cascade3_iter_7600.caffemodel'
+cascade1_model: '_iter_8000'
+cascade2_model: '_iter_9600'
+cascade3_model: '_iter_7200'
 
 
 mean_file: 'misc/vgg_mean.npy'
@@ -29,11 +29,12 @@ models_dir: 'models/'
 conv_prototxt: 'vgg_deploy.prototxt'
 full_conv_prototxt_prefix: 'vgg_deploy_fullconv_lv'
 data-USA_pyra_widths: [1204, 860, 614, 439, 313, 224, 160]
-plot_feat: True
+plot_feat: False
 
  # Configs for bounding boxes
-nms_thres: 0.5 # default 0.3!!!
-bbox_score_thres: 1.0
+nms_on: True
+nms_thres: 0.5
+bbox_score_thres: 0.95
 
 print_max_score_on: False
 print_iter: 10

@@ -73,7 +73,10 @@ for src_img_filename in src_img_filenames:
 
     bbox_lst.sort(key=operator.itemgetter(4), reverse=True)
     tmp_lst = [sc for sc in bbox_lst if sc[4] >= config['bbox_score_thres']]
-    bbox_lst = nms_slow(tmp_lst, config['nms_thres'])
+    if config['nms_on']:
+        bbox_lst = nms_slow(tmp_lst, config['nms_thres'])
+    else:
+        bbox_lst = tmp_lst
     save_bbox(tar_exp_dir+'/'+set_name, frame_num, bbox_lst, V_name, dataset_dir)
 
     # Printing stuff

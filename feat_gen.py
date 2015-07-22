@@ -65,9 +65,7 @@ for lv in range(num_lv):
             feat[:, :, feat1[1].shape[1]:] = feat1
 
         feat = np.exp(feat[1])/(np.exp(feat[0])+np.exp(feat[1]))
-        print feat
-        print feat.max()
-        # print feat.shape
+
         savename = tar_file_dir + filename_prefix + '.npy'
         np.save(savename, feat)
         print "Saved to " + savename
